@@ -69,7 +69,7 @@
             <form action="{{route('admin.hapusDataCategory')}}" method="POST" class="d-inline delete-form">
               @csrf
               <input type="hidden" name="id" value="{{ $value->id }}">
-              <button type="submit" class="btn btn-sm btn-danger delete-button" data-name>Hapus</button>
+              <button type="submit" class="btn btn-sm btn-danger btn-delete" data-name="{{ $value->name }}">Hapus</button>
             </form>
           </td>
         </tr>

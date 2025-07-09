@@ -2,7 +2,7 @@
     <!--begin::Sidebar Brand-->
     <div class="sidebar-brand">
         <!--begin::Brand Text-->
-        <span class="brand-text fw-light">side bar</span>
+        <span class="brand-text fw-light">side-bar</span>
         <!--end::Brand Text-->
         </a>
         <!--end::Brand Link-->
@@ -12,7 +12,7 @@
     <div class="sidebar-wrapper">
         <nav class="mt-2">
         <!--begin::Sidebar Menu-->
-        <ul
+      <ul
             class="nav sidebar-menu flex-column"
             data-lte-toggle="treeview"
             role="navigation"
@@ -21,19 +21,24 @@
             id="navigation"
         >
             <li class="nav-item">
-                <a href="{{route('admin.dashboard')}}" class="nav-link">
+                <a href="{{ route('admin.dashboard') }}"
+                    class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
                     <i class="nav-icon bi bi-palette"></i>
                     <p>Dashboard</p>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a href="{{route('admin.user')}}" class="nav-link">
+                <a href="{{ route('admin.user') }}"
+                    class="nav-link {{ request()->routeIs('admin.user') ? 'active' : '' }}">
                     <i class="nav-icon bi bi-clipboard-fill"></i>
                     <p>Users</p>
                 </a>
             </li>
+
             <li class="nav-item">
-                <a href="{{route('admin.category')}}" class="nav-link">
+                <a href="{{ route('admin.category') }}"
+                    class="nav-link {{ request()->routeIs('admin.category') ? 'active' : '' }}">
                     <i class="nav-icon bi bi-box-seam-fill"></i>
                     <p>Category</p>
                 </a>

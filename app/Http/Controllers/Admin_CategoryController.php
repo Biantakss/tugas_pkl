@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use App\Mail\KategoriNotificationMail;
+use Illuminate\Support\Facades\Mail;
 
 class Admin_CategoryController extends Controller
 {
@@ -15,7 +18,7 @@ class Admin_CategoryController extends Controller
         ->get();
 
         return view('layout-dashboard/category/index', [
-            'title' => 'ini Category',
+            'title' => 'Kategori',
         ], compact('data'));
     }
 
@@ -28,10 +31,15 @@ class Admin_CategoryController extends Controller
 
         DB::beginTransaction();
         try {
-            Category::create([
+            $kategori = Category::create([
                 'name'       => $validated['name'],
                 'is_publish' => $validated['is_publish']
             ]);
+
+            $users = User::all();
+            foreach ($users as $user) {
+                Mail::to($user->email)->queue(new KategoriNotificationMail($kategori, 'tambah'));
+            }
 
             DB::commit();
 
@@ -41,23 +49,36 @@ class Admin_CategoryController extends Controller
             return redirect()->back()->with('error', 'Gagal menambahkan kategori: ' . $e->getMessage());
         }
     }
- 
+
     public function hapusDataCategory(Request $request)
     {
         DB::beginTransaction();
         try {
-            $category = Category::findOrFail($request->id);
+            $category = Category::find($request->id);
+
+            if (!$category) {
+                return redirect()->back()->with('error', 'Kategori tidak ditemukan atau sudah dihapus.');
+            }
+
+            $categoryData = [
+                'name'       => $category->name,
+                'is_publish' => $category->is_publish
+            ];
+
             $category->delete();
 
+            $users = User::all();
+            foreach ($users as $user) {
+                Mail::to($user->email)->queue(new KategoriNotificationMail($categoryData, 'hapus'));
+            }
+
             DB::commit();
-            return redirect()->back()->with('success', 'Data kategori berhasil dihapus.');
-        } 
-        catch (\Exeption $e) {
-            DB::rollback();
+            return redirect()->back()->with('success', 'Kategori berhasil dihapus.');
+        } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->with('error', 'Gagal menghapus kategori: ' . $e->getMessage());
         }
     }
-
     public function editDataCategory(Request $request)
     {
         $validated = $request->validate([
